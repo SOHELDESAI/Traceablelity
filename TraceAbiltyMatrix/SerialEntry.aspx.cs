@@ -121,6 +121,12 @@ namespace TraceAbiltyMatrix
                 }
             }
         }
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            string mess = "You clicked on submit button";
+            ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + mess + "');", true);
+        }
     }
 }
 

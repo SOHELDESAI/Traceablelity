@@ -84,7 +84,7 @@
                             </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
-                    <asp:Button ID="btnSubmit" runat="server" Text="Submit" CssClass="btn btn-success"/>
+                    <asp:Button ID="btnSubmit" runat="server" Text="Submit" CssClass="btn btn-success" OnClick="btnSubmit_Click"/>
                 </div>
             </div>
         </div>
