@@ -109,7 +109,7 @@ namespace TraceAbiltyMatrix
                     INNER JOIN ERP_BOMCompDetails AS DET ON RB.CompItem = DET.BOM  
                     INNER JOIN ERP_ItemMaster AS CompItemMaster ON DET.CompItem = CompItemMaster.Item  
                 )
-                SELECT BOMDesc, ItemDesc, StockStatus FROM RecursiveBOM ORDER BY BOMLevel;
+                SELECT BOMDesc, ItemDesc, StockStatus FROM RecursiveBOM WHERE StockStatus IN ('M', 'F') ORDER BY BOMLevel;
             ", conn))
                 {
                     cmd.Parameters.AddWithValue("@bom", bom);
@@ -121,12 +121,100 @@ namespace TraceAbiltyMatrix
                 }
             }
         }
+        private string GenerateAssemblyID()
+        {
+            string connStr = ConfigurationManager.AppSettings["strConnect"];
+            string newID = "ASM0001";
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT MAX(AssemblyID) FROM AssemblyMaster", conn);
+                var result = cmd.ExecuteScalar();
+
+                if (result != DBNull.Value && result != null)
+                {
+                    string lastID = result.ToString();
+                    int number = int.Parse(lastID.Substring(3));
+                    newID = "ASM" + (number + 1).ToString("D4");
+                }
+            }
+            return newID;
+        }
+
+
+        //protected void btnSubmit_Click(object sender, EventArgs e)
+        //{
+        //    string mess = "You clicked on submit button";
+        //    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + mess + "');", true);
+        //}
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            string mess = "You clicked on submit button";
-            ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + mess + "');", true);
+            string connStr = ConfigurationManager.AppSettings["strConnect"];
+            string assemblyID = GenerateAssemblyID();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlTransaction trans = conn.BeginTransaction();
+
+                try
+                {
+                    // 1. Insert Finish Good (BOM)
+                    string fgSerial = txtFGSerial.Text.Trim();  
+
+                    using (SqlCommand cmdFG = new SqlCommand(@"INSERT INTO AssemblyMaster 
+                (AssemblyID, BOM, ItemDesc, ItemType, StockStatus, SerialNumber) 
+                VALUES (@AssemblyID, @BOM, @ItemDesc, @ItemType, @StockStatus, @SerialNumber)", conn, trans))
+                    {
+                        cmdFG.Parameters.AddWithValue("@AssemblyID", assemblyID);
+                        cmdFG.Parameters.AddWithValue("@BOM", txtBOM.Text.Trim());
+                        cmdFG.Parameters.AddWithValue("@ItemDesc", txtBOM.Text.Trim()); 
+                        cmdFG.Parameters.AddWithValue("@ItemType", "FinishGood");
+                        cmdFG.Parameters.AddWithValue("@StockStatus", "F");
+                        cmdFG.Parameters.AddWithValue("@SerialNumber", fgSerial);
+                        cmdFG.ExecuteNonQuery();
+                    }
+
+                    // 2. Insert Semi-Finished / Raw Items from Grid
+                    foreach (GridViewRow row in gvBOM.Rows)
+                    {
+                        TextBox txtQty = (TextBox)row.FindControl("txtQuantity");
+                        if (txtQty != null && txtQty.Visible && !string.IsNullOrEmpty(txtQty.Text))
+                        {
+                            string itemDesc = row.Cells[1].Text;
+                            string stockStatus = row.Cells[2].Text;
+                            string serialNumber = txtQty.Text.Trim();
+
+                            string itemType = (stockStatus == "M") ? "SemiFinished" : "Raw";
+
+                            using (SqlCommand cmd = new SqlCommand(@"INSERT INTO AssemblyMaster 
+                        (AssemblyID, BOM, ItemDesc, ItemType, StockStatus, SerialNumber) 
+                        VALUES (@AssemblyID, @BOM, @ItemDesc, @ItemType, @StockStatus, @SerialNumber)", conn, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@AssemblyID", assemblyID);
+                                cmd.Parameters.AddWithValue("@BOM", txtBOM.Text.Trim());
+                                cmd.Parameters.AddWithValue("@ItemDesc", itemDesc);
+                                cmd.Parameters.AddWithValue("@ItemType", itemType);
+                                cmd.Parameters.AddWithValue("@StockStatus", stockStatus);
+                                cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    trans.Commit();
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Assembly saved with ID: " + assemblyID + "');", true);
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Error: " + ex.Message + "');", true);
+                }
+            }
         }
+
     }
 }
 

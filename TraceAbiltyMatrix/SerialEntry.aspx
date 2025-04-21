@@ -66,6 +66,9 @@
                         <div class="input-group-btn">
                             <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary" OnClick="btnSearch_Click" />
                         </div>
+                        <asp:Label ID="lblFGSerial" runat="server" Text="Finish Good Serial No:" />
+<asp:TextBox ID="txtFGSerial" runat="server" />
+
                     </div>
                     <ul id="suggestions" class="list-group"></ul>
                 </div>
