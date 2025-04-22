@@ -32,7 +32,6 @@ namespace TraceAbiltyMatrix
         {
             DataTable dt = new DataTable();
 
-            //string connStr = ConfigurationManager.ConnectionStrings["YourConnectionStringName"].ConnectionString;
             string connStr = ConfigurationManager.AppSettings["strConnect"];
 
             using (SqlConnection conn = new SqlConnection(connStr))

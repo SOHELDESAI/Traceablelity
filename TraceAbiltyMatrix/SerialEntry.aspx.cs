@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
@@ -36,7 +34,6 @@ namespace TraceAbiltyMatrix
             }
         }
 
-
         [WebMethod]
         public static List<string> GetBOMSuggestions(string prefix)
         {
@@ -58,7 +55,6 @@ namespace TraceAbiltyMatrix
             }
             return suggestions;
         }
-
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             string selectedBOM = txtBOM.Text.Trim();
@@ -67,7 +63,6 @@ namespace TraceAbiltyMatrix
                 LoadBOMData(selectedBOM);
             }
         }
-
         private void LoadBOMData(string bom)
         {
             string connStr = ConfigurationManager.AppSettings["strConnect"];
@@ -141,14 +136,6 @@ namespace TraceAbiltyMatrix
             }
             return newID;
         }
-
-
-        //protected void btnSubmit_Click(object sender, EventArgs e)
-        //{
-        //    string mess = "You clicked on submit button";
-        //    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + mess + "');", true);
-        //}
-
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             string connStr = ConfigurationManager.AppSettings["strConnect"];
@@ -161,12 +148,11 @@ namespace TraceAbiltyMatrix
 
                 try
                 {
-                    // 1. Insert Finish Good (BOM)
                     string fgSerial = txtFGSerial.Text.Trim();  
 
                     using (SqlCommand cmdFG = new SqlCommand(@"INSERT INTO AssemblyMaster 
-                (AssemblyID, BOM, ItemDesc, ItemType, StockStatus, SerialNumber) 
-                VALUES (@AssemblyID, @BOM, @ItemDesc, @ItemType, @StockStatus, @SerialNumber)", conn, trans))
+                            (AssemblyID, BOM, ItemDesc, ItemType, StockStatus, SerialNumber) 
+                            VALUES (@AssemblyID, @BOM, @ItemDesc, @ItemType, @StockStatus, @SerialNumber)", conn, trans))
                     {
                         cmdFG.Parameters.AddWithValue("@AssemblyID", assemblyID);
                         cmdFG.Parameters.AddWithValue("@BOM", txtBOM.Text.Trim());
@@ -177,7 +163,6 @@ namespace TraceAbiltyMatrix
                         cmdFG.ExecuteNonQuery();
                     }
 
-                    // 2. Insert Semi-Finished / Raw Items from Grid
                     foreach (GridViewRow row in gvBOM.Rows)
                     {
                         TextBox txtQty = (TextBox)row.FindControl("txtQuantity");
