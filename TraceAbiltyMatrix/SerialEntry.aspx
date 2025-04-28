@@ -1,14 +1,18 @@
-﻿
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SerialEntry.aspx.cs" Inherits="TraceAbiltyMatrix.SerialEntry" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SerialEntry.aspx.cs" Inherits="TraceAbiltyMatrix.SerialEntry" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BOM Details</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             $("#<%= txtBOM.ClientID %>").keyup(function () {
@@ -35,45 +39,70 @@
             $("#suggestions").hide();
         }
     </script>
+
     <style>
         #suggestions {
             list-style: none;
             padding: 0;
+            margin-top: 2px;
             border: 1px solid #ccc;
+            background: #fff;
             position: absolute;
-            background: white;
             width: 100%;
             display: none;
             z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
         }
+
         #suggestions li {
             padding: 10px;
             cursor: pointer;
         }
+
         #suggestions li:hover {
-            background: #f0f0f0;
+            background-color: #f0f0f0;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .fg-serial-group {
+            margin-top: 15px;
+        }
+
+        .btn-search {
+            min-width: 100px;
         }
     </style>
 </head>
+
 <body>
     <form id="form1" runat="server">
         <div class="container">
+
+            <!-- BOM Search Section -->
             <div class="row">
                 <div class="col-md-6">
                     <label class="control-label">Enter BOM / Description:</label>
                     <div class="input-group">
-                        <asp:TextBox ID="txtBOM" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="txtBOM" runat="server" CssClass="form-control" placeholder="Type BOM..."></asp:TextBox>
                         <div class="input-group-btn">
-                            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary" OnClick="btnSearch_Click" />
+                            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary btn-search" OnClick="btnSearch_Click" />
                         </div>
-                        <asp:Label ID="lblFGSerial" runat="server" Text="Finish Good Serial No:" />
-<asp:TextBox ID="txtFGSerial" runat="server" />
-
+                        <ul id="suggestions" class="list-group"></ul>
                     </div>
-                    <ul id="suggestions" class="list-group"></ul>
+
+                    <div class="fg-serial-group">
+                        <label class="control-label">Finish Good Serial No:</label>
+                        <asp:TextBox ID="txtFGSerial" runat="server" CssClass="form-control" placeholder="Enter FG Serial No."></asp:TextBox>
+                    </div>
                 </div>
             </div>
-            <div class="row">
+
+            <!-- GridView Section -->
+            <div class="row" style="margin-top: 30px;">
                 <div class="col-md-12">
                     <asp:GridView ID="gvBOM" runat="server" AutoGenerateColumns="False" CssClass="table table-bordered table-striped" OnRowDataBound="gvBOM_RowDataBound">
                         <Columns>
@@ -87,9 +116,13 @@
                             </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
-                    <asp:Button ID="btnSubmit" runat="server" Text="Submit" CssClass="btn btn-success" OnClick="btnSubmit_Click"/>
+
+                    <div class="text-center" style="margin-top: 20px;">
+                        <asp:Button ID="btnSubmit" runat="server" Text="Submit" CssClass="btn btn-success" OnClick="btnSubmit_Click" />
+                    </div>
                 </div>
             </div>
+
         </div>
     </form>
 </body>
