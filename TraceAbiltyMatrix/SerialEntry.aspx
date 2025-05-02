@@ -6,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BOM Details</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
@@ -82,7 +80,6 @@
     <form id="form1" runat="server">
         <div class="container">
 
-            <!-- BOM Search Section -->
             <div class="row">
                 <div class="col-md-6">
                     <label class="control-label">Enter BOM / Description:</label>
@@ -101,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- GridView Section -->
             <div class="row" style="margin-top: 30px;">
                 <div class="col-md-12">
                     <asp:GridView ID="gvBOM" runat="server" AutoGenerateColumns="False" CssClass="table table-bordered table-striped" OnRowDataBound="gvBOM_RowDataBound">
