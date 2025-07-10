@@ -1,4 +1,6 @@
-﻿using System;
+﻿//This is for pratice
+
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
